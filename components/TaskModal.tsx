@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { Task, TaskStatus, TaskPriority, Project } from '../types';
 import { X, Trash2 } from 'lucide-react';
@@ -60,19 +59,21 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
   };
 
   const handleDelete = () => {
-    if (task?.id && window.confirm(`Are you sure you want to delete "${task.title}"?`)) {
-      onDelete(task.id);
+    if (task && task.id) {
+        if (window.confirm(`Are you sure you want to delete "${editedTask.title}"?`)) {
+            onDelete(task.id);
+        }
     }
   };
   
-  const isNewTask = !('id' in editedTask) || !editedTask.id;
+  const isNewTask = !task;
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm animate-[modal-fade-in_0.2s_ease-out]">
-      <div ref={modalRef} className="bg-white dark:bg-gray-950 rounded-lg shadow-2xl w-full max-w-2xl border border-gray-300 dark:border-gray-700">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+      <div ref={modalRef} className="bg-white dark:bg-neutral-950 rounded-lg shadow-2xl w-full max-w-2xl border border-neutral-300 dark:border-neutral-700">
+        <div className="p-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{isNewTask ? 'Create Task' : 'Edit Task'}</h2>
-          <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-gray-800">
+          <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -85,7 +86,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
               id="title"
               value={editedTask.title}
               onChange={handleChange}
-              className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+              className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
             />
           </div>
           <div>
@@ -96,7 +97,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
               value={editedTask.description}
               onChange={handleChange}
               rows={4}
-              className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+              className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -107,7 +108,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
                     id="project" 
                     value={editedTask.projectId || ''} 
                     onChange={handleChange}
-                    className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+                    className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
                 >
                   <option value="">No Project</option>
                   {projects.map(p => (
@@ -122,7 +123,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
                     id="priority" 
                     value={editedTask.priority} 
                     onChange={handleChange}
-                    className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+                    className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -139,7 +140,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
               id="tags"
               value={tagInput}
               onChange={handleTagChange}
-              className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+              className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -150,7 +151,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
                     id="status" 
                     value={editedTask.status} 
                     onChange={handleChange}
-                    className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+                    className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
                 >
                   <option value="inbox">Inbox</option>
                   <option value="todo">To Do</option>
@@ -168,7 +169,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
                   onChange={handleChange}
                   min="0"
                   step="0.5"
-                  className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+                  className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
                 />
               </div>
                <div>
@@ -179,24 +180,24 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
                   id="startTime"
                   value={editedTask.startTime || ''}
                   onChange={handleChange}
-                  className="w-full bg-slate-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+                  className="w-full bg-slate-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-md p-2 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
                 />
               </div>
           </div>
         </div>
-        <div className="p-6 bg-slate-50 dark:bg-gray-900/60 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
+        <div className="p-6 bg-slate-50 dark:bg-neutral-900/60 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
           <button 
             onClick={handleDelete} 
             disabled={isNewTask}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-500 rounded-md hover:bg-red-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500 dark:focus-visible:ring-offset-gray-950 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-500 rounded-md hover:bg-red-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500 dark:focus-visible:ring-offset-neutral-950 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
             <Trash2 className="w-4 h-4"/>
             Delete
           </button>
           <div className="flex gap-4">
-            <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-200 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500 dark:focus-visible:ring-offset-gray-950 transition-colors">
+            <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-200 dark:hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-950 transition-colors">
               Cancel
             </button>
-            <button onClick={handleSave} className="px-6 py-2 text-sm font-semibold text-white bg-gray-800 dark:text-gray-950 dark:bg-gray-200 rounded-md shadow-sm hover:bg-gray-700 dark:hover:bg-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500 transition-all">
+            <button onClick={handleSave} className="px-6 py-2 text-sm font-semibold text-white bg-neutral-800 dark:text-neutral-950 dark:bg-neutral-200 rounded-md shadow-sm hover:bg-neutral-700 dark:hover:bg-neutral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 transition-all">
               Save
             </button>
           </div>

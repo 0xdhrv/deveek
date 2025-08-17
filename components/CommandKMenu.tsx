@@ -143,13 +143,13 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-24 animate-[modal-fade-in_0.2s_ease-out]" onClick={onClose}>
       <div 
         ref={modalRef}
-        className="bg-white dark:bg-gray-950 rounded-lg shadow-2xl w-full max-w-2xl border border-gray-300 dark:border-gray-700 overflow-hidden flex flex-col"
+        className="bg-white dark:bg-neutral-950 rounded-lg shadow-2xl w-full max-w-2xl border border-neutral-300 dark:border-neutral-700 overflow-hidden flex flex-col"
         onClick={e => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
-        <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+        <div className="p-3 border-b border-neutral-200 dark:border-neutral-700 flex items-center gap-2">
           {level !== 'root' && (
-            <button onClick={goBack} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-gray-800">
+            <button onClick={goBack} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-neutral-800">
                 <ChevronLeft className="w-5 h-5"/>
             </button>
           )}
@@ -178,7 +178,7 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
                     onMouseMove={() => setActiveIndex(index)}
                     onClick={() => { action.perform(); onClose(); }}
                     className={`flex items-center justify-between p-3 cursor-pointer mx-2 my-1 rounded-md ${
-                      activeIndex === index ? 'bg-slate-100 dark:bg-gray-800' : 'text-slate-700 dark:text-slate-300'
+                      activeIndex === index ? 'bg-slate-100 dark:bg-neutral-800' : 'text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <div className="flex items-center gap-3">

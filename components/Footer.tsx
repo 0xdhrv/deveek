@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
     }, []);
 
     return (
-        <footer className="flex-shrink-0 p-2 text-center border-t border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <footer className="flex-shrink-0 p-2 text-center border-t border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
             <style>
                 {`.kbd-shortcut { 
                     padding: 0.2rem 0.4rem;

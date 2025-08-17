@@ -39,7 +39,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, projects, onClick, style, isT
   const project = task.projectId ? projects.find(p => p.id === task.projectId) : null;
   const isCompleted = task.status === 'completed';
 
-  const cardClasses = `relative p-3 bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/80 transition-all group ${isCompleted ? 'opacity-60' : ''} ${style ? 'w-[calc(100%-1rem)]' : 'shadow-sm'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500 dark:focus-visible:ring-offset-gray-900`;
+  const cardClasses = `relative p-3 bg-white dark:bg-neutral-800/80 rounded-lg border border-neutral-200 dark:border-neutral-700/50 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/80 transition-all group ${isCompleted ? 'opacity-60' : ''} ${style ? 'w-[calc(100%-1rem)]' : 'shadow-sm'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-900`;
 
   return (
     <div
@@ -74,7 +74,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, projects, onClick, style, isT
         {task.tags && task.tags.length > 0 && !isTimed && (
             <div className="flex flex-wrap gap-1.5 mt-1">
                 {task.tags.map(tag => (
-                    <span key={tag} className="text-xs text-slate-600 dark:text-slate-300 bg-slate-200 dark:bg-gray-700/60 px-2 py-0.5 rounded-full">{tag}</span>
+                    <span key={tag} className="text-xs text-slate-600 dark:text-slate-300 bg-slate-200 dark:bg-neutral-700/60 px-2 py-0.5 rounded-full">{tag}</span>
                 ))}
             </div>
         )}

@@ -1,6 +1,6 @@
 
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import { Task, DayIdentifier, Project } from '../types';
 import DayColumn, { hours, HOUR_HEIGHT_REM } from './DayColumn';
 import { SettingsContext } from '../contexts/SettingsContext';
@@ -28,35 +28,46 @@ const getWeekDays = (date: Date): Date[] => {
   return week;
 };
 
-const CurrentTimeIndicator = () => {
-  const [top, setTop] = useState('0px');
-
-  useEffect(() => {
-    const updatePosition = () => {
+const CurrentTimeIndicator: React.FC<{ scrollRef: React.RefObject<HTMLDivElement> }> = ({ scrollRef }) => {
+    const [top, setTop] = React.useState(0);
+  
+    useEffect(() => {
+      const updatePosition = () => {
+        const now = new Date();
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+  
+        const totalMinutes = (now.getTime() - startOfDay.getTime()) / 60000;
+        const topPosition = (totalMinutes / (24 * 60)) * (24 * HOUR_HEIGHT_REM * 16); // rem to px
+        setTop(topPosition);
+      };
+  
+      updatePosition();
+      const interval = setInterval(updatePosition, 60000); // Update every minute
+      return () => clearInterval(interval);
+    }, []);
+  
+    // Scroll to current time on initial render
+    useEffect(() => {
       const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const totalMinutes = hours * 60 + minutes;
-      const percentage = totalMinutes / (24 * 60);
-      const totalHeight = 24 * HOUR_HEIGHT_REM; 
-      // The 110px is an estimate for the header height. A more robust solution might use a ref.
-      const offset = 110; 
-      setTop(`${percentage * totalHeight * 16 + offset}px`); // rem to px
-    };
-
-    updatePosition();
-    const timer = setInterval(updatePosition, 60000); // Update every minute
-    return () => clearInterval(timer);
-  }, []);
+      if (now.toDateString() === new Date().toDateString()) {
+        const scrollContainer = scrollRef.current;
+        if (scrollContainer) {
+          const hour = now.getHours();
+          const targetScroll = (hour - 1) * HOUR_HEIGHT_REM * 16;
+          scrollContainer.scrollTop = targetScroll;
+        }
+      }
+    }, [scrollRef]);
 
   return (
-    <div className="absolute left-0 right-0 z-20 flex items-center" style={{ top }}>
+    <div className="absolute left-0 right-0 z-20 flex items-center" style={{ top: `${top}px` }}>
         <div className="w-16 text-right pr-2">
              <div className="text-xs font-semibold text-red-500 -mt-2.5">
                 {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
             </div>
         </div>
-        <div className="w-2.5 h-2.5 bg-red-500 rounded-full -ml-1"></div>
+        <div className="w-2 h-2 bg-red-500 rounded-full -ml-1 shadow-md"></div>
         <div className="flex-1 h-0.5 bg-red-500"></div>
     </div>
   );
@@ -65,72 +76,93 @@ const CurrentTimeIndicator = () => {
 
 const CalendarView: React.FC<CalendarViewProps> = ({ currentDate, tasks, projects, onTaskDrop, onTaskClick, onAddTask }) => {
   const { settings } = useContext(SettingsContext);
+  const scrollRef = useRef<HTMLDivElement>(null);
   
   let weekDays = getWeekDays(currentDate);
 
   if (settings.hideWeekends) {
       weekDays = weekDays.filter(day => day.getDay() !== 0 && day.getDay() !== 6);
   }
+  
+  const todayId = new Date().toISOString().split('T')[0];
 
   const getGridTemplateColumns = () => {
-    let columns = weekDays.map(() => 'minmax(180px, 1fr)');
-    if (settings.showInbox) {
-      columns.unshift('minmax(250px, 0.75fr)');
-    }
-    return columns.join(' ');
+    return weekDays.map(() => 'minmax(180px, 1fr)').join(' ');
   };
 
 
   return (
-    <div className="relative overflow-x-auto h-full flex">
+    <div className="flex h-full bg-white dark:bg-neutral-950">
         {settings.showInbox && (
-            <div className="flex-shrink-0 w-[250px]">
-                <DayColumn
-                    key="inbox"
-                    dayId="inbox"
-                    title="All-day"
-                    tasks={tasks.filter(t => t.status === 'inbox')}
-                    projects={projects}
-                    onTaskDrop={onTaskDrop}
-                    onTaskClick={onTaskClick}
-                    onAddTask={onAddTask}
-                    isInbox
-                />
+            <div className="w-[250px] flex-shrink-0 flex flex-col border-r border-neutral-200 dark:border-neutral-800">
+                <div className="p-3 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-center min-h-[65px]">
+                    <h3 className="font-semibold text-sm text-neutral-600 dark:text-neutral-400">All-day</h3>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                    <DayColumn
+                        key="inbox"
+                        dayId="inbox"
+                        tasks={tasks.filter(t => t.status === 'inbox' || !t.startTime)}
+                        projects={projects}
+                        onTaskDrop={onTaskDrop}
+                        onTaskClick={onTaskClick}
+                        onAddTask={onAddTask}
+                        isInbox
+                    />
+                </div>
             </div>
         )}
-        <div className="flex-shrink-0 w-16 border-r border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-            <div className="h-[110px] border-b border-gray-200 dark:border-gray-800"></div>
-            <div className="relative" style={{ height: `${hours.length * HOUR_HEIGHT_REM}rem` }}>
-                {hours.map(hour => (
-                  <div key={hour} className="h-full" style={{ height: `${HOUR_HEIGHT_REM}rem`}}>
-                    <span className="text-xs text-gray-400 dark:text-gray-600 -mt-2.5 ml-1 absolute">{String(hour).padStart(2,'0')}:00</span>
-                  </div>
-                ))}
+        <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-shrink-0 flex border-b border-neutral-200 dark:border-neutral-800">
+                <div className="w-16 flex-shrink-0 border-r border-neutral-200 dark:border-neutral-800"></div>
+                <div className="flex-1 grid" style={{ gridTemplateColumns: getGridTemplateColumns() }}>
+                     {weekDays.map(day => {
+                        const dayId = day.toISOString().split('T')[0];
+                        const isToday = todayId === dayId;
+                        const headerDateColor = isToday ? 'text-white' : 'text-neutral-500 dark:text-neutral-400';
+                        const headerDateBg = isToday ? 'bg-red-500' : 'bg-transparent';
+
+                        return (
+                            <div key={dayId} className="p-2 text-center border-l border-neutral-200 dark:border-neutral-800 min-h-[65px]">
+                                <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{day.toLocaleString('default', { weekday: 'short' })}</p>
+                                <span className={`text-2xl font-bold ${headerDateColor} ${headerDateBg} w-8 h-8 flex items-center justify-center rounded-full mx-auto mt-1`}>
+                                    {day.getDate()}
+                                </span>
+                            </div>
+                        );
+                     })}
+                </div>
+            </div>
+            <div ref={scrollRef} className="flex-1 overflow-y-auto relative">
+                <div className="flex">
+                    <div className="w-16 flex-shrink-0 border-r border-neutral-200 dark:border-neutral-800 relative" style={{ height: `${hours.length * HOUR_HEIGHT_REM}rem` }}>
+                        {hours.map(hour => (
+                            <div key={hour} className="h-full text-right pr-2" style={{ height: `${HOUR_HEIGHT_REM}rem`}}>
+                                <span className="text-xs text-neutral-400 dark:text-neutral-500 relative -top-2">{String(hour).padStart(2,'0')}:00</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex-1 grid" style={{ gridTemplateColumns: getGridTemplateColumns() }}>
+                        {weekDays.map(day => {
+                            const dayId = day.toISOString().split('T')[0];
+                            const dayTasks = tasks.filter(t => t.date && t.date.toISOString().split('T')[0] === dayId);
+                            return (
+                                <DayColumn
+                                    key={dayId}
+                                    dayId={dayId}
+                                    tasks={dayTasks}
+                                    projects={projects}
+                                    onTaskDrop={onTaskDrop}
+                                    onTaskClick={onTaskClick}
+                                    onAddTask={onAddTask}
+                                />
+                            );
+                        })}
+                    </div>
+                </div>
+                {weekDays.some(d => d.toISOString().split('T')[0] === todayId) && <CurrentTimeIndicator scrollRef={scrollRef} />}
             </div>
         </div>
-        <div className="flex-1 overflow-x-auto">
-            <div className="grid min-h-full" style={{ gridTemplateColumns: getGridTemplateColumns() }}>
-                {weekDays.map(day => {
-                    const dayId = day.toISOString().split('T')[0];
-                    const dayTasks = tasks.filter(t => t.date && t.date.toISOString().split('T')[0] === dayId);
-                    return (
-                        <DayColumn
-                            key={dayId}
-                            dayId={dayId}
-                            title={day.toLocaleString('default', { weekday: 'short' })}
-                            date={day.getDate()}
-                            isToday={new Date().toISOString().split('T')[0] === dayId}
-                            tasks={dayTasks}
-                            projects={projects}
-                            onTaskDrop={onTaskDrop}
-                            onTaskClick={onTaskClick}
-                            onAddTask={onAddTask}
-                        />
-                    );
-                })}
-            </div>
-        </div>
-        <CurrentTimeIndicator />
     </div>
   );
 };

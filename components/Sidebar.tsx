@@ -31,8 +31,8 @@ const NavItem: React.FC<{view: typeof views[0], activeView: ViewMode, setView: (
                 }}
                 className={`relative flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
                     isActive 
-                        ? 'text-slate-900 dark:text-slate-50 bg-slate-200/60 dark:bg-gray-800/80' 
-                        : 'text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-gray-800/60'
+                        ? 'text-slate-900 dark:text-slate-50 bg-slate-200/60 dark:bg-neutral-800/80' 
+                        : 'text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-neutral-800/60'
                 }`}
                 aria-current={isActive}
             >
@@ -61,12 +61,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSettingsOpen, isSidebarOpen, setIsS
 
     const sidebarContent = (
         <div className="flex flex-col h-full">
-            <div className="p-4 flex items-center justify-between border-b border-slate-200 dark:border-gray-800 h-16">
+            <div className="p-4 flex items-center justify-between border-b border-slate-200 dark:border-neutral-800 h-16">
                 <div className="flex items-center gap-2">
                     <Sparkles className="w-6 h-6 text-slate-700 dark:text-slate-300" />
                     <span className="text-lg font-semibold text-slate-800 dark:text-slate-200">DevWeek</span>
                 </div>
-                <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-gray-800">
+                <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-neutral-800">
                     <X className="w-5 h-5" />
                 </button>
             </div>
@@ -77,11 +77,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSettingsOpen, isSidebarOpen, setIsS
                     ))}
                 </ul>
             </nav>
-            <div className="p-4 border-t border-slate-200 dark:border-gray-800">
+            <div className="p-4 border-t border-slate-200 dark:border-neutral-800">
                  <a
                     href="#"
                     onClick={handleSettingsClick}
-                    className="flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-semibold transition-colors text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-gray-800/60"
+                    className="flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-semibold transition-colors text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-neutral-800/60"
                 >
                     <Settings className="w-5 h-5" />
                     <span>Settings</span>
@@ -101,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSettingsOpen, isSidebarOpen, setIsS
             ></div>
 
             {/* Sidebar */}
-            <aside className={`w-64 flex-shrink-0 bg-white dark:bg-gray-950 backdrop-blur-lg border-r border-slate-200 dark:border-gray-800 fixed md:relative inset-y-0 left-0 z-40 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+            <aside className={`w-64 flex-shrink-0 bg-white dark:bg-neutral-950 backdrop-blur-lg border-r border-slate-200 dark:border-neutral-800 fixed md:relative inset-y-0 left-0 z-40 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                {sidebarContent}
             </aside>
         </>

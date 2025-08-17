@@ -118,13 +118,10 @@ const App: React.FC = () => {
         // D-key sequence listener
         if (event.key === 'd' && keySequence.length === 0) {
             keySequence.push('d');
-            showToast("Shortcut mode enabled. Press another key.");
-
+            
             if (sequenceTimeout) clearTimeout(sequenceTimeout);
             sequenceTimeout = setTimeout(() => {
                 keySequence = [];
-                // Clear the toast if no second key is pressed
-                setToastMessage(msg => msg === "Shortcut mode enabled. Press another key." ? "" : msg);
             }, 2000);
             return;
         }
@@ -147,7 +144,7 @@ const App: React.FC = () => {
                 case 'n': setSelectedTask(null); setIsTaskModalOpen(true); toastMsg = "Opened New Task modal"; break;
                 case ',': setIsCommandKOpen(true); toastMsg = "Opened Command Menu"; break; // d+, as a nod to sublime/vscode
                 default:
-                  setToastMessage(""); // Clear the "shortcut mode" message
+                  setToastMessage(""); // Clear any active toast message
                   return;
             }
             showToast(toastMsg);
@@ -315,7 +312,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen font-sans bg-white dark:bg-gray-950 text-slate-800 dark:text-slate-300 transition-colors duration-300">
+    <div className="flex h-screen font-sans bg-white dark:bg-neutral-950 text-slate-800 dark:text-slate-300 transition-colors duration-300">
       <Sidebar onSettingsOpen={() => setIsSettingsOpen(true)} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header
@@ -324,7 +321,7 @@ const App: React.FC = () => {
           pomodoroControls={pomodoroControls}
           onMenuClick={() => setIsSidebarOpen(true)}
         />
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+        <main className="flex-1 overflow-y-auto bg-neutral-50 dark:bg-neutral-900">
           <div data-view-transition>
               {renderActiveView()}
           </div>
@@ -364,7 +361,7 @@ const App: React.FC = () => {
         />
       )}
        {toastMessage && (
-          <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-md text-sm shadow-lg animate-modal-fade-in z-50">
+          <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-neutral-900 text-white px-4 py-2 rounded-md text-sm shadow-lg animate-modal-fade-in z-50">
             {toastMessage}
           </div>
        )}

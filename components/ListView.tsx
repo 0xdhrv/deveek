@@ -42,14 +42,14 @@ const FilterMenu: React.FC<{
 }> = ({ projects, filters, onFilterChange, onClearFilters }) => {
     const hasActiveFilters = filters.project.length > 0 || filters.priority.length > 0 || filters.status.length > 0;
     return (
-        <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-950 border border-slate-200 dark:border-gray-700 rounded-lg shadow-xl z-20 p-4">
+        <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-lg shadow-xl z-20 p-4">
             <div className="space-y-4">
                 <div>
                     <h4 className="font-semibold text-sm mb-2 text-slate-600 dark:text-slate-300">By Project</h4>
                     <div className="max-h-32 overflow-y-auto space-y-1 pr-1">
                         {projects.map(p => (
-                           <label key={p.id} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-800 p-1 rounded-md">
-                                <input type="checkbox" checked={filters.project.includes(p.id)} onChange={() => onFilterChange('project', p.id)} className="w-4 h-4 rounded text-gray-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-gray-500" />
+                           <label key={p.id} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-100 dark:hover:bg-neutral-800 p-1 rounded-md">
+                                <input type="checkbox" checked={filters.project.includes(p.id)} onChange={() => onFilterChange('project', p.id)} className="w-4 h-4 rounded text-neutral-600 bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 focus:ring-neutral-500" />
                                 {p.name}
                             </label>
                         ))}
@@ -59,8 +59,8 @@ const FilterMenu: React.FC<{
                     <h4 className="font-semibold text-sm mb-2 text-slate-600 dark:text-slate-300">By Priority</h4>
                     <div className="space-y-1">
                         {(['urgent', 'high', 'medium', 'low'] as TaskPriority[]).map(p => (
-                            <label key={p} className="flex items-center gap-2 text-sm capitalize cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-800 p-1 rounded-md">
-                                <input type="checkbox" checked={filters.priority.includes(p)} onChange={() => onFilterChange('priority', p)} className="w-4 h-4 rounded text-gray-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-gray-500" />
+                            <label key={p} className="flex items-center gap-2 text-sm capitalize cursor-pointer hover:bg-slate-100 dark:hover:bg-neutral-800 p-1 rounded-md">
+                                <input type="checkbox" checked={filters.priority.includes(p)} onChange={() => onFilterChange('priority', p)} className="w-4 h-4 rounded text-neutral-600 bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 focus:ring-neutral-500" />
                                 {p}
                             </label>
                         ))}
@@ -70,8 +70,8 @@ const FilterMenu: React.FC<{
                     <h4 className="font-semibold text-sm mb-2 text-slate-600 dark:text-slate-300">By Status</h4>
                     <div className="space-y-1">
                        {(['todo', 'active', 'completed', 'inbox'] as TaskStatus[]).map(s => (
-                            <label key={s} className="flex items-center gap-2 text-sm capitalize cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-800 p-1 rounded-md">
-                                <input type="checkbox" checked={filters.status.includes(s)} onChange={() => onFilterChange('status', s)} className="w-4 h-4 rounded text-gray-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-gray-500" />
+                            <label key={s} className="flex items-center gap-2 text-sm capitalize cursor-pointer hover:bg-slate-100 dark:hover:bg-neutral-800 p-1 rounded-md">
+                                <input type="checkbox" checked={filters.status.includes(s)} onChange={() => onFilterChange('status', s)} className="w-4 h-4 rounded text-neutral-600 bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 focus:ring-neutral-500" />
                                 {s}
                             </label>
                         ))}
@@ -79,8 +79,8 @@ const FilterMenu: React.FC<{
                 </div>
             </div>
              {hasActiveFilters && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-gray-700">
-                    <button onClick={onClearFilters} className="w-full text-center px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-gray-700 transition-colors">Clear All Filters</button>
+                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-neutral-700">
+                    <button onClick={onClearFilters} className="w-full text-center px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors">Clear All Filters</button>
                 </div>
             )}
         </div>
@@ -208,23 +208,23 @@ const ListView: React.FC<ListViewProps> = ({ tasks, projects, onTaskClick, onBul
                 <div className="relative" ref={filterMenuRef}>
                     <button 
                         onClick={() => setIsFilterMenuOpen(prev => !prev)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-gray-800 border border-slate-300 dark:border-gray-700 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500 dark:focus-visible:ring-offset-gray-900"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-900"
                     >
                         <Filter className="w-4 h-4" />
                         Filter
                         {activeFilterCount > 0 && (
-                            <span className="bg-gray-700 dark:bg-gray-200 text-white dark:text-gray-800 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">{activeFilterCount}</span>
+                            <span className="bg-neutral-700 dark:bg-neutral-200 text-white dark:text-neutral-800 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">{activeFilterCount}</span>
                         )}
                     </button>
                     {isFilterMenuOpen && <FilterMenu projects={projects} filters={filters} onFilterChange={handleFilterChange} onClearFilters={onClearFilters} />}
                 </div>
             </div>
-            <div className="flex-1 overflow-y-auto rounded-lg border border-slate-200 dark:border-gray-800">
-                <table className="min-w-full divide-y divide-slate-200 dark:divide-gray-800">
-                    <thead className="bg-slate-50 dark:bg-gray-800/50 sticky top-0 z-10">
+            <div className="flex-1 overflow-y-auto rounded-lg border border-slate-200 dark:border-neutral-800">
+                <table className="min-w-full divide-y divide-slate-200 dark:divide-neutral-800">
+                    <thead className="bg-slate-50 dark:bg-neutral-800/50 sticky top-0 z-10">
                         <tr>
                             <th scope="col" className="px-6 py-3">
-                                <input type="checkbox" onChange={handleSelectAll} checked={isAllSelected} className="w-4 h-4 rounded text-gray-600 bg-gray-100 dark:bg-gray-900 border-gray-300 dark:border-gray-600 focus:ring-gray-500"/>
+                                <input type="checkbox" onChange={handleSelectAll} checked={isAllSelected} className="w-4 h-4 rounded text-neutral-600 bg-neutral-100 dark:bg-neutral-900 border-neutral-300 dark:border-neutral-600 focus:ring-neutral-500"/>
                             </th>
                             <SortableHeader sortKey="title">Title</SortableHeader>
                             <SortableHeader sortKey="projectName">Project</SortableHeader>
@@ -233,14 +233,14 @@ const ListView: React.FC<ListViewProps> = ({ tasks, projects, onTaskClick, onBul
                             <SortableHeader sortKey="date">Date</SortableHeader>
                         </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-950 divide-y divide-slate-200 dark:divide-gray-800">
+                    <tbody className="bg-white dark:bg-neutral-950 divide-y divide-slate-200 dark:divide-neutral-800">
                         {processedTasks.map(task => {
                             const project = task.projectId ? projectsById[task.projectId] : null;
                             const isSelected = selectedTaskIds.has(task.id);
                             return (
-                                <tr key={task.id} className={`transition-colors ${isSelected ? 'bg-slate-100 dark:bg-gray-800/50' : 'hover:bg-slate-50 dark:hover:bg-gray-900'}`}>
+                                <tr key={task.id} className={`transition-colors ${isSelected ? 'bg-slate-100 dark:bg-neutral-800/50' : 'hover:bg-slate-50 dark:hover:bg-neutral-900'}`}>
                                     <td className="px-6 py-4">
-                                        <input type="checkbox" checked={isSelected} onChange={() => handleSelectOne(task.id)} className="w-4 h-4 rounded text-gray-600 bg-gray-100 dark:bg-gray-900 border-gray-300 dark:border-gray-600 focus:ring-gray-500"/>
+                                        <input type="checkbox" checked={isSelected} onChange={() => handleSelectOne(task.id)} className="w-4 h-4 rounded text-neutral-600 bg-neutral-100 dark:bg-neutral-900 border-neutral-300 dark:border-neutral-600 focus:ring-neutral-500"/>
                                     </td>
                                     <td onClick={() => onTaskClick(task)} className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800 dark:text-slate-200 cursor-pointer">{task.title}</td>
                                     <td onClick={() => onTaskClick(task)} className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 cursor-pointer">
@@ -269,17 +269,17 @@ const ListView: React.FC<ListViewProps> = ({ tasks, projects, onTaskClick, onBul
                 )}
             </div>
             {selectedTaskIds.size > 0 && (
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-4 py-2 bg-white dark:bg-gray-800 border border-slate-300 dark:border-gray-700 rounded-full shadow-lg z-20">
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-4 py-2 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-full shadow-lg z-20">
                      <span className="text-sm font-semibold">{selectedTaskIds.size} selected</span>
-                     <div className="w-px h-6 bg-slate-300 dark:bg-gray-600"></div>
+                     <div className="w-px h-6 bg-slate-300 dark:bg-neutral-600"></div>
                      {/* Bulk Actions Here */}
                       <div className="flex items-center gap-2">
-                        <button onClick={() => onBulkUpdate(selectedTaskIds, { status: 'completed' })} title="Mark as Completed" className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-gray-700"><CheckSquare className="w-5 h-5 text-green-500"/></button>
-                        <button onClick={() => onBulkUpdate(selectedTaskIds, { priority: 'urgent' })} title="Set Priority to Urgent" className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-gray-700"><Shield className="w-5 h-5 text-red-500"/></button>
-                        <button onClick={() => onBulkDelete(selectedTaskIds)} title="Delete Selected" className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-gray-700"><Trash2 className="w-5 h-5 text-red-500"/></button>
+                        <button onClick={() => onBulkUpdate(selectedTaskIds, { status: 'completed' })} title="Mark as Completed" className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-neutral-700"><CheckSquare className="w-5 h-5 text-green-500"/></button>
+                        <button onClick={() => onBulkUpdate(selectedTaskIds, { priority: 'urgent' })} title="Set Priority to Urgent" className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-neutral-700"><Shield className="w-5 h-5 text-red-500"/></button>
+                        <button onClick={() => onBulkDelete(selectedTaskIds)} title="Delete Selected" className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-neutral-700"><Trash2 className="w-5 h-5 text-red-500"/></button>
                      </div>
-                     <div className="w-px h-6 bg-slate-300 dark:bg-gray-600"></div>
-                     <button onClick={() => setSelectedTaskIds(new Set())} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-gray-700"><X className="w-5 h-5"/></button>
+                     <div className="w-px h-6 bg-slate-300 dark:bg-neutral-600"></div>
+                     <button onClick={() => setSelectedTaskIds(new Set())} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-neutral-700"><X className="w-5 h-5"/></button>
                 </div>
             )}
         </div>
