@@ -1,0 +1,6 @@
+{
+  "name": "DevWeek Task Planner",
+  "description": "A minimalist, multi-view weekly task planner for developers, featuring notifications, a responsive design, and calendar, weekly, kanban, and list views with tagging and priority management.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

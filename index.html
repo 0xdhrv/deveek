@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevWeek Task Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    
+    <style>
+      /* View Transitions API Animations */
+      @keyframes slide-from-right {
+        from { transform: translateX(20px); opacity: 0; }
+      }
+      @keyframes slide-to-left {
+        to { transform: translateX(-20px); opacity: 0; }
+      }
+      ::view-transition-old(root) {
+        animation: 0.25s ease-out both slide-to-left;
+      }
+      ::view-transition-new(root) {
+        animation: 0.25s ease-out both slide-from-right;
+      }
+      /* Ensure root is identifiable for transition */
+      [data-view-transition] {
+        view-transition-name: root;
+      }
+    </style>
+     <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Geist', 'sans-serif'],
+              mono: ['"Google Sans Code"', 'monospace'],
+            },
+            keyframes: {
+              'modal-fade-in': {
+                '0%': { opacity: 0, transform: 'scale(0.98)' },
+                '100%': { opacity: 1, transform: 'scale(1)' },
+              },
+            },
+            animation: {
+              'modal-fade-in': 'modal-fade-in 0.2s ease-out',
+            }
+          }
+        }
+      }
+    </script>
+    <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
+    "react/": "https://esm.sh/react@^19.1.1/",
+    "react": "https://esm.sh/react@^19.1.1",
+    "@google/genai": "https://esm.sh/@google/genai@^1.12.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.418.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
