@@ -1,19 +1,12 @@
-
-
 import React, { useState } from 'react';
+import useStore from '../store/useStore';
 import { Project } from '../types';
 import { Trash2, Plus } from 'lucide-react';
 
-interface ProjectManagementProps {
-    projects: Project[];
-    onAddProject: (project: Omit<Project, 'id'>) => void;
-    onUpdateProject: (project: Project) => void;
-    onDeleteProject: (projectId: string) => void;
-}
-
 const COLORS = ['#6366f1', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#3b82f6'];
 
-const ProjectManagement: React.FC<ProjectManagementProps> = ({ projects, onAddProject, onUpdateProject, onDeleteProject }) => {
+const ProjectManagement: React.FC = () => {
+    const { projects, addProject, updateProject, deleteProject } = useStore();
     const [newProjectName, setNewProjectName] = useState('');
     const [newProjectColor, setNewProjectColor] = useState(COLORS[0]);
     const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
@@ -21,7 +14,7 @@ const ProjectManagement: React.FC<ProjectManagementProps> = ({ projects, onAddPr
 
     const handleAddProject = () => {
         if (newProjectName.trim()) {
-            onAddProject({ name: newProjectName.trim(), color: newProjectColor });
+            addProject({ name: newProjectName.trim(), color: newProjectColor });
             setNewProjectName('');
             setNewProjectColor(COLORS[0]);
         }
@@ -34,12 +27,11 @@ const ProjectManagement: React.FC<ProjectManagementProps> = ({ projects, onAddPr
 
     const handleSaveEdit = (project: Project) => {
         if (editingProjectName.trim()) {
-            onUpdateProject({ ...project, name: editingProjectName.trim() });
+            updateProject({ ...project, name: editingProjectName.trim() });
         }
         setEditingProjectId(null);
         setEditingProjectName('');
     }
-
 
     return (
         <div className="space-y-4 pt-4">
@@ -53,7 +45,7 @@ const ProjectManagement: React.FC<ProjectManagementProps> = ({ projects, onAddPr
                                 <input
                                     type="text"
                                     value={editingProjectName}
-                                    onChange={(e) => setEditingProjectName(e.target.value)}
+                                    onChange={(e) => setEditingProjectName(e.target.all)}
                                     onBlur={() => handleSaveEdit(project)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit(project)}
                                     className="bg-transparent w-full outline-none focus-visible:ring-1 focus-visible:ring-neutral-500 rounded-sm"
@@ -66,7 +58,7 @@ const ProjectManagement: React.FC<ProjectManagementProps> = ({ projects, onAddPr
                             )}
                         </div>
                         <div className="flex items-center gap-2">
-                            <button onClick={() => onDeleteProject(project.id)} className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded">
+                            <button onClick={() => deleteProject(project.id)} className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded">
                                 <Trash2 className="w-4 h-4" />
                             </button>
                         </div>
