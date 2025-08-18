@@ -1,8 +1,6 @@
-
-
-import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import useStore from '../store/useStore';
 import { Task, Project, CommandKAction } from '../types';
-import { SettingsContext } from '../contexts/SettingsContext';
 import { 
     CalendarDays, Trello, List, Settings, Plus, Code, 
     Clock, Play, Pause, TimerReset, Coffee, ChevronLeft 
@@ -11,21 +9,20 @@ import { PomodoroControls } from './PomodoroTimer';
 import { useFocusTrap } from '../hooks/usePomodoro';
 
 interface CommandKMenuProps {
-  tasks: Task[];
-  projects: Project[];
-  onClose: () => void;
-  onOpenTask: (task: Task) => void;
-  onOpenSettings: () => void;
-  onAddTask: (task: Omit<Task, 'id' | 'status'>) => void;
   pomodoroControls: PomodoroControls;
 }
 
 type CommandKLevel = 'root' | 'searchTasks' | 'searchProjects' | 'pomodoro' | 'createTask';
 
-const CommandKMenu: React.FC<CommandKMenuProps> = ({ 
-    tasks, projects, onClose, onOpenTask, onOpenSettings, onAddTask, pomodoroControls 
-}) => {
-  const { setView } = useContext(SettingsContext);
+const CommandKMenu: React.FC<CommandKMenuProps> = ({ pomodoroControls }) => {
+  const {
+    tasks,
+    projects,
+    setView,
+    addTask,
+    transient: { openTaskModal, toggleSettingsModal, toggleCommandKMenu },
+  } = useStore();
+
   const { isActive, toggleTimer, resetTimer, changeMode } = pomodoroControls;
   const [level, setLevel] = useState<CommandKLevel>('root');
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,8 +59,8 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
     { id: 'view-calendar', label: 'Go to Calendar View', group: 'Navigation', icon: Clock, perform: () => setView('calendar') },
     { id: 'view-kanban', label: 'Go to Kanban View', group: 'Navigation', icon: Trello, perform: () => setView('kanban') },
     { id: 'view-list', label: 'Go to List View', group: 'Navigation', icon: List, perform: () => setView('list') },
-    { id: 'settings', label: 'Open Settings', group: 'Actions', icon: Settings, perform: onOpenSettings },
-  ], [setView, onOpenSettings]);
+    { id: 'settings', label: 'Open Settings', group: 'Actions', icon: Settings, perform: toggleSettingsModal },
+  ], [setView, toggleSettingsModal]);
   
   const pomodoroActions: CommandKAction[] = useMemo(() => [
         { id: 'pomo-toggle', label: isActive ? 'Pause Timer' : 'Start Timer', group: 'Pomodoro', icon: isActive ? Pause : Play, perform: toggleTimer },
@@ -85,7 +82,7 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
         case 'searchTasks':
             return filter(tasks.map(task => ({
                 id: `task-${task.id}`, label: task.title, group: 'Tasks', icon: Code,
-                perform: () => onOpenTask(task), keywords: [...task.tags, task.description].join(' '), item: task,
+                perform: () => openTaskModal(task), keywords: [...task.tags, task.description].join(' '), item: task,
             })));
         case 'searchProjects':
             return filter(projects.map(project => ({
@@ -100,21 +97,21 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
         default:
             return [];
     }
-  }, [searchTerm, level, rootActions, pomodoroActions, tasks, projects, onOpenTask]);
+  }, [searchTerm, level, rootActions, pomodoroActions, tasks, projects, openTaskModal]);
 
   useEffect(() => setActiveIndex(0), [displayedItems]);
   useEffect(() => activeItemRef.current?.scrollIntoView({ block: 'nearest' }), [activeIndex]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
-        level === 'root' ? onClose() : goBack();
+        level === 'root' ? toggleCommandKMenu() : goBack();
         return;
     }
     
     if (level === 'createTask') {
         if (e.key === 'Enter' && searchTerm.trim()) {
-            onAddTask({ title: searchTerm.trim(), description: '', date: null, priority: 'medium', tags: [] });
-            onClose();
+            addTask({ title: searchTerm.trim(), description: '', date: null, priority: 'medium', tags: [] });
+            toggleCommandKMenu();
         }
         return;
     }
@@ -132,7 +129,7 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
       const action = displayedItems[activeIndex];
       if (action) {
         action.perform();
-        onClose();
+        toggleCommandKMenu();
       }
     }
   };
@@ -140,7 +137,7 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
   const currentLevelConfig = levelConfig[level];
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-24 animate-[modal-fade-in_0.2s_ease-out]" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-24 animate-[modal-fade-in_0.2s_ease-out]" onClick={toggleCommandKMenu}>
       <div 
         ref={modalRef}
         className="bg-white dark:bg-neutral-950 rounded-lg shadow-2xl w-full max-w-2xl border border-neutral-300 dark:border-neutral-700 overflow-hidden flex flex-col"
@@ -176,7 +173,7 @@ const CommandKMenu: React.FC<CommandKMenuProps> = ({
                     key={action.id}
                     ref={activeIndex === index ? activeItemRef : null}
                     onMouseMove={() => setActiveIndex(index)}
-                    onClick={() => { action.perform(); onClose(); }}
+                    onClick={() => { action.perform(); toggleCommandKMenu(); }}
                     className={`flex items-center justify-between p-3 cursor-pointer mx-2 my-1 rounded-md ${
                       activeIndex === index ? 'bg-slate-100 dark:bg-neutral-800' : 'text-slate-700 dark:text-slate-300'
                     }`}

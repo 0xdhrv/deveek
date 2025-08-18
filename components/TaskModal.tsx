@@ -1,16 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
-import { Task, TaskStatus, TaskPriority, Project } from '../types';
+import useStore from '../store/useStore';
+import { Task, TaskStatus, TaskPriority } from '../types';
 import { X, Trash2 } from 'lucide-react';
 import { useFocusTrap } from '../hooks/usePomodoro';
-
-interface TaskModalProps {
-  task: Task | null;
-  projects: Project[];
-  onClose: () => void;
-  onSave: (task: Task | Omit<Task, 'id'>) => void;
-  onDelete: (taskId: string) => void;
-}
 
 const createDefaultTask = (): Omit<Task, 'id'> => ({
     title: '',
@@ -22,16 +14,24 @@ const createDefaultTask = (): Omit<Task, 'id'> => ({
     estimatedHours: 1,
 });
 
-const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, onDelete }) => {
-  const [editedTask, setEditedTask] = useState<Task | Omit<Task, 'id'>>(() => task || createDefaultTask());
+const TaskModal: React.FC = () => {
+  const {
+    projects,
+    transient: { selectedTask, closeTaskModal },
+    addTask,
+    updateTask,
+    deleteTask,
+  } = useStore();
+
+  const [editedTask, setEditedTask] = useState<Task | Omit<Task, 'id'>>(() => selectedTask || createDefaultTask());
   const [tagInput, setTagInput] = useState('');
   const modalRef = useFocusTrap(true);
 
   useEffect(() => {
-    const currentTask = task || createDefaultTask();
+    const currentTask = selectedTask || createDefaultTask();
     setEditedTask(currentTask);
     setTagInput(currentTask.tags ? currentTask.tags.join(', ') : '');
-  }, [task]);
+  }, [selectedTask]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -55,25 +55,31 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
 
   const handleSave = () => {
     const tags = tagInput.split(',').map(tag => tag.trim()).filter(Boolean);
-    onSave({ ...editedTask, tags });
+    const taskToSave = { ...editedTask, tags };
+
+    if ('id' in taskToSave && taskToSave.id) {
+      updateTask(taskToSave as Task);
+    } else {
+      addTask(taskToSave);
+    }
   };
 
   const handleDelete = () => {
-    if (task && task.id) {
+    if (selectedTask && selectedTask.id) {
         if (window.confirm(`Are you sure you want to delete "${editedTask.title}"?`)) {
-            onDelete(task.id);
+            deleteTask(selectedTask.id);
         }
     }
   };
   
-  const isNewTask = !task;
+  const isNewTask = !selectedTask;
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm animate-[modal-fade-in_0.2s_ease-out]">
       <div ref={modalRef} className="bg-white dark:bg-neutral-950 rounded-lg shadow-2xl w-full max-w-2xl border border-neutral-300 dark:border-neutral-700">
         <div className="p-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{isNewTask ? 'Create Task' : 'Edit Task'}</h2>
-          <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800">
+          <button onClick={closeTaskModal} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -194,7 +200,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, projects, onClose, onSave, 
             Delete
           </button>
           <div className="flex gap-4">
-            <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-200 dark:hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-950 transition-colors">
+            <button onClick={closeTaskModal} className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-200 dark:hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-950 transition-colors">
               Cancel
             </button>
             <button onClick={handleSave} className="px-6 py-2 text-sm font-semibold text-white bg-neutral-800 dark:text-neutral-950 dark:bg-neutral-200 rounded-md shadow-sm hover:bg-neutral-700 dark:hover:bg-neutral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 transition-all">

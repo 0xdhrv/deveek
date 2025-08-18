@@ -1,28 +1,27 @@
-
-
-import React, { useContext } from 'react';
-import { SettingsContext } from '../contexts/SettingsContext';
+import React from 'react';
+import useStore from '../store/useStore';
 import { X, Settings as SettingsIcon, UploadCloud, DownloadCloud } from 'lucide-react';
-import { Settings, Project } from '../types';
+import { Settings } from '../types';
 import ProjectManagement from './ProjectManagement';
 import { useFocusTrap } from '../hooks/usePomodoro';
 
-interface SettingsModalProps {
-  onClose: () => void;
-  projects: Project[];
-  onAddProject: (project: Omit<Project, 'id'>) => void;
-  onUpdateProject: (project: Project) => void;
-  onDeleteProject: (projectId: string) => void;
-  onExport: () => void;
-  onImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
+const SettingsModal: React.FC = () => {
+  const {
+    settings,
+    updateSettings,
+    projects,
+    addProject,
+    updateProject,
+    deleteProject,
+    exportData,
+    importData,
+    transient: { toggleSettingsModal },
+  } = useStore();
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, projects, onAddProject, onUpdateProject, onDeleteProject, onExport, onImport }) => {
-  const { settings, setSettings } = useContext(SettingsContext);
   const modalRef = useFocusTrap(true);
 
   const handleToggleChange = (key: keyof Settings) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+    updateSettings({ [key]: !settings[key] });
   };
   
   const handleNotificationToggle = async () => {
@@ -30,11 +29,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, projects, onAddP
       if ('Notification' in window) {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-          setSettings(prev => ({ ...prev, notificationsEnabled: true }));
+          updateSettings({ notificationsEnabled: true });
         }
       }
     } else {
-      setSettings(prev => ({ ...prev, notificationsEnabled: false }));
+      updateSettings({ notificationsEnabled: false });
     }
   };
 
@@ -46,7 +45,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, projects, onAddP
             <SettingsIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" />
             <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Settings</h2>
           </div>
-          <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800">
+          <button onClick={toggleSettingsModal} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -95,15 +94,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, projects, onAddP
 
           <ProjectManagement 
                 projects={projects}
-                onAddProject={onAddProject}
-                onUpdateProject={onUpdateProject}
-                onDeleteProject={onDeleteProject}
+                onAddProject={addProject}
+                onUpdateProject={updateProject}
+                onDeleteProject={deleteProject}
             />
           
           <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 border-b border-neutral-200 dark:border-neutral-700 pb-2 pt-4">Data Management</h3>
           <div className="flex flex-col sm:flex-row gap-4">
             <button
-              onClick={onExport}
+              onClick={exportData}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-slate-200 dark:hover:bg-neutral-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-950"
             >
               <DownloadCloud className="w-5 h-5" />
@@ -120,7 +119,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, projects, onAddP
                 id="import-file"
                 className="hidden"
                 accept=".json"
-                onChange={onImport}
+                onChange={importData}
               />
             </label>
           </div>
@@ -131,7 +130,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, projects, onAddP
 
         </div>
         <div className="p-4 bg-slate-50 dark:bg-neutral-900/40 border-t border-neutral-200 dark:border-neutral-700 flex justify-end">
-            <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-transparent rounded-lg hover:bg-slate-200 dark:hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-950 transition-colors">
+            <button onClick={toggleSettingsModal} className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-transparent rounded-lg hover:bg-slate-200 dark:hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 dark:focus-visible:ring-offset-neutral-950 transition-colors">
               Close
             </button>
         </div>
