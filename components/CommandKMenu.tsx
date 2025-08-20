@@ -1,8 +1,8 @@
 
 
-import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Task, Project, CommandKAction } from '../types';
-import { SettingsContext } from '../contexts/SettingsContext';
+import { useAppStore } from '../stores/appStore';
 import { 
     CalendarDays, Trello, List, Settings, Plus, Code, 
     Clock, Play, Pause, TimerReset, Coffee, ChevronLeft 
@@ -25,7 +25,7 @@ type CommandKLevel = 'root' | 'searchTasks' | 'searchProjects' | 'pomodoro' | 'c
 const CommandKMenu: React.FC<CommandKMenuProps> = ({ 
     tasks, projects, onClose, onOpenTask, onOpenSettings, onAddTask, pomodoroControls 
 }) => {
-  const { setView } = useContext(SettingsContext);
+  const setView = useAppStore((state) => state.setView);
   const { isActive, toggleTimer, resetTimer, changeMode } = pomodoroControls;
   const [level, setLevel] = useState<CommandKLevel>('root');
   const [searchTerm, setSearchTerm] = useState('');

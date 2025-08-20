@@ -1,9 +1,9 @@
 
 
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Task, DayIdentifier, Project } from '../types';
 import DayColumn, { hours, HOUR_HEIGHT_REM } from './DayColumn';
-import { SettingsContext } from '../contexts/SettingsContext';
+import { useAppStore } from '../stores/appStore';
 
 interface CalendarViewProps {
   currentDate: Date;
@@ -75,7 +75,7 @@ const CurrentTimeIndicator: React.FC<{ scrollRef: React.RefObject<HTMLDivElement
 
 
 const CalendarView: React.FC<CalendarViewProps> = ({ currentDate, tasks, projects, onTaskDrop, onTaskClick, onAddTask }) => {
-  const { settings } = useContext(SettingsContext);
+  const settings = useAppStore((state) => state.settings);
   const scrollRef = useRef<HTMLDivElement>(null);
   
   let weekDays = getWeekDays(currentDate);

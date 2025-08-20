@@ -1,11 +1,11 @@
 
 
-import React, { useContext } from 'react';
-import { SettingsContext } from '../contexts/SettingsContext';
+import React from 'react';
 import { X, Settings as SettingsIcon, UploadCloud, DownloadCloud } from 'lucide-react';
 import { Settings, Project } from '../types';
 import ProjectManagement from './ProjectManagement';
 import { useFocusTrap } from '../hooks/usePomodoro';
+import { useAppStore } from '../stores/appStore';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -18,7 +18,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, projects, onAddProject, onUpdateProject, onDeleteProject, onExport, onImport }) => {
-  const { settings, setSettings } = useContext(SettingsContext);
+  const { settings, setSettings } = useAppStore();
   const modalRef = useFocusTrap(true);
 
   const handleToggleChange = (key: keyof Settings) => {

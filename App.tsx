@@ -1,11 +1,10 @@
 
 
-import React, { useState, useCallback, useEffect, useContext } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Task, DayIdentifier, TaskPriority, Project, TaskStatus } from './types';
 import Header from './components/Header';
 import TaskModal from './components/TaskModal';
 import SettingsModal from './components/SettingsModal';
-import { SettingsContext } from './contexts/SettingsContext';
 import CalendarView from './components/CalendarView';
 import KanbanView from './components/KanbanView';
 import ListView from './components/ListView';
@@ -14,19 +13,33 @@ import CommandKMenu from './components/CommandKMenu';
 import Footer from './components/Footer';
 import { usePomodoro } from './hooks/usePomodoro';
 import Sidebar from './components/Sidebar';
+import { useAppStore, initializeApp } from './stores/appStore';
 
 
 const App: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isCommandKOpen, setIsCommandKOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { settings, setView } = useContext(SettingsContext);
-  const [toastMessage, setToastMessage] = useState('');
+  // Use Zustand store instead of individual useState calls
+  const {
+    currentDate,
+    setCurrentDate,
+    tasks,
+    setTasks,
+    projects,
+    setProjects,
+    selectedTask,
+    setSelectedTask,
+    isTaskModalOpen,
+    setIsTaskModalOpen,
+    isSettingsOpen,
+    setIsSettingsOpen,
+    isCommandKOpen,
+    setIsCommandKOpen,
+    isSidebarOpen,
+    setIsSidebarOpen,
+    settings,
+    setView,
+    toastMessage,
+    setToastMessage,
+  } = useAppStore();
 
   const pomodoroControls = usePomodoro({ 
     notificationsEnabled: settings.notificationsEnabled 
@@ -35,69 +48,20 @@ const App: React.FC = () => {
   const showToast = useCallback((message: string, duration = 4000) => {
     setToastMessage(message);
     setTimeout(() => setToastMessage(''), duration);
+  }, [setToastMessage]);
+
+  // Initialize app on mount
+  useEffect(() => {
+    initializeApp();
   }, []);
 
-  // Load data from local storage on initial render
-  useEffect(() => {
-    try {
-      const storedTasks = localStorage.getItem('devweek-tasks');
-      if (storedTasks) {
-        const parsedTasks: Task[] = JSON.parse(storedTasks);
-        const tasksWithDates = parsedTasks.map(task => ({
-          ...task,
-          date: task.date ? new Date(task.date) : null,
-        }));
-        setTasks(tasksWithDates);
-      } else {
-        const today = new Date();
-        const tomorrow = new Date();
-        tomorrow.setDate(today.getDate() + 1);
-        setTasks([
-          { id: '1', title: 'Setup project structure', description: 'Initialize repository and configure tooling.', date: today, status: 'completed', estimatedHours: 2, startTime: '09:00', priority: 'high', tags: ['setup', 'config'], projectId: 'proj-1' },
-          { id: '2', title: 'Design component library', description: 'Create base components for the UI.', date: today, status: 'active', estimatedHours: 4, startTime: '11:00', priority: 'high', tags: ['design', 'ui'], projectId: 'proj-1' },
-          { id: '3', title: 'Implement drag and drop', description: 'Use HTML5 Drag and Drop API for task movement.', date: tomorrow, status: 'todo', estimatedHours: 3, startTime: '10:00', priority: 'medium', tags: ['feature', 'core'], projectId: 'proj-2' },
-          { id: '4', title: 'Refactor state management', description: 'Consider using a context or reducer for complex state.', date: null, status: 'inbox', estimatedHours: 5, priority: 'low', tags: ['refactor', 'tech-debt'] },
-          { id: '5', title: 'Deploy to production', description: 'Setup CI/CD pipeline and deploy.', date: today, status: 'todo', estimatedHours: 2, startTime: '16:00', priority: 'urgent', tags: ['devops', 'release'], projectId: 'proj-2' },
-        ]);
-      }
-
-      const storedProjects = localStorage.getItem('devweek-projects');
-       if (storedProjects) {
-        setProjects(JSON.parse(storedProjects));
-      } else {
-        setProjects([
-          { id: 'proj-1', name: 'Phoenix Project', color: '#6366f1' },
-          { id: 'proj-2', name: 'Titan Initiative', color: '#10b981' },
-        ]);
-      }
-
-    } catch (error) {
-      console.error("Failed to load data from local storage", error);
-    }
-  }, []);
-  
-  // Save tasks to local storage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem('devweek-tasks', JSON.stringify(tasks));
-    } catch (error) {
-      console.error("Failed to save tasks to local storage", error);
-    }
-  }, [tasks]);
-
-  // Save projects to local storage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem('devweek-projects', JSON.stringify(projects));
-    } catch (error) {
-      console.error("Failed to save projects to local storage", error);
-    }
-  }, [projects]);
-  
-  // App shortcuts
+  // Load legacy data from local storage and show initial toast
   useEffect(() => {
     showToast("Pro-Tip: Press 'd' then a key for shortcuts (e.g., d+k for menu).", 5000);
+  }, [showToast]);
 
+  // App shortcuts
+  useEffect(() => {
     let keySequence: string[] = [];
     let sequenceTimeout: ReturnType<typeof setTimeout> | null = null;
     

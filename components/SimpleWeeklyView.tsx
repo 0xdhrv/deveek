@@ -1,9 +1,9 @@
 
 
-import React, { useContext } from 'react';
+import React from 'react';
 import { Task, DayIdentifier, Project } from '../types';
 import SimpleDayColumn from './SimpleDayColumn';
-import { SettingsContext } from '../contexts/SettingsContext';
+import { useAppStore } from '../stores/appStore';
 
 interface SimpleWeeklyViewProps {
   currentDate: Date;
@@ -31,7 +31,7 @@ const getWeekDays = (date: Date): Date[] => {
 
 
 const SimpleWeeklyView: React.FC<SimpleWeeklyViewProps> = ({ currentDate, tasks, projects, onTaskDrop, onTaskClick, onAddTask }) => {
-  const { settings } = useContext(SettingsContext);
+  const settings = useAppStore((state) => state.settings);
   
   let weekDays = getWeekDays(currentDate);
 
