@@ -1,7 +1,7 @@
 
 
-import React, { useContext } from 'react';
-import { SettingsContext } from '../contexts/SettingsContext';
+import React from 'react';
+import { useAppStore } from '../stores/appStore';
 import { ViewMode } from '../types';
 import { CalendarDays, Clock, Trello, List, Settings, X, Sparkles } from 'lucide-react';
 
@@ -45,7 +45,7 @@ const NavItem: React.FC<{view: typeof views[0], activeView: ViewMode, setView: (
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ onSettingsOpen, isSidebarOpen, setIsSidebarOpen }) => {
-    const { settings, setView } = useContext(SettingsContext);
+    const { settings, setView } = useAppStore();
 
     const closeSidebar = () => {
         if(window.innerWidth < 768) { // md breakpoint

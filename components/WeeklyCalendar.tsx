@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Task, DayIdentifier, Project } from '../types';
 import DayColumn from './DayColumn';
-import { SettingsContext } from '../contexts/SettingsContext';
+import { useAppStore } from '../stores/appStore';
 
 interface WeeklyCalendarProps {
   currentDate: Date;
@@ -29,7 +29,7 @@ const getWeekDays = (date: Date): Date[] => {
 
 
 const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ currentDate, tasks, projects, onTaskDrop, onTaskClick, onAddTask }) => {
-  const { settings } = useContext(SettingsContext);
+  const settings = useAppStore((state) => state.settings);
   
   let weekDays = getWeekDays(currentDate);
 

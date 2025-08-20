@@ -1,19 +1,19 @@
 
 
-import React, { useContext } from 'react';
+import React from 'react';
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import PomodoroTimer, { PomodoroControls } from './PomodoroTimer';
-import { SettingsContext } from '../contexts/SettingsContext';
+import { useAppStore } from '../stores/appStore';
 
 interface HeaderProps {
   currentDate: Date;
-  setCurrentDate: React.Dispatch<React.SetStateAction<Date>>;
+  setCurrentDate: (date: Date) => void;
   pomodoroControls: PomodoroControls;
   onMenuClick: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ currentDate, setCurrentDate, pomodoroControls, onMenuClick }) => {
-  const { settings } = useContext(SettingsContext);
+  const settings = useAppStore((state) => state.settings);
   
   const changeWeek = (offset: number) => {
     const newDate = new Date(currentDate);
